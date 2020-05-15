@@ -1,1 +1,1 @@
-# Udacity_Image_Classifier_Project
+# Udacity Image Classifier Project
