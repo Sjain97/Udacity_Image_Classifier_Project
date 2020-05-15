@@ -20,10 +20,12 @@ def arg_parser():
     parser.add_argument('model_name', help='model name in same directory')
 
     parser.add_argument('--top_k',
+                        default = 1,
                         type=int,
                         help='Choose top K matches as int.')
 
     parser.add_argument('--category_names',
+                        default = 'label_map.json',
                         type=str,
                         help='Path to a JSON file mapping labels to flower names.')
 
@@ -32,10 +34,6 @@ def arg_parser():
     return args
 
 def predict(processed_image, model, top_k):
-  if type(top_k) == type(None):
-        top_k = 5
-        print("Top K not specified, assuming K=5.")
-
   predictions = model.predict(processed_image)
   top_k_values, top_k_indices = tf.nn.top_k(predictions, top_k)
   top_k_indices = top_k_indices[0] + 1
@@ -56,14 +54,11 @@ def main():
     # Use `processed_image` to predict the top K most likely classes
     top_flowers, top_probs = predict(processed_image, model, args.top_k)
 
-        # Load categories to names json file
-    if type(args.category_names) != type(None):
-        with open(args.category_names, 'r') as f:
-            class_names = json.load(f)
+    # Load categories to names json file
+    with open(args.category_names, 'r') as f:
+        class_names = json.load(f)
 
-        labels = [class_names[str(top_flowers[i])] for i in range(args.top_k)]
-    else:
-        labels = top_flowers
+    labels = [class_names[str(top_flowers[i])] for i in range(args.top_k)]
 
     # Print out probabilities
     print('Top flower names: \n', labels)
